@@ -45,7 +45,9 @@ setup(name='pomdp-py',
           'pygame',        # for some tests
           'opencv-python',  # for some tests
           'networkx',
-          'pygraphviz'
+          'pygraphviz',
+          'pyserial',
+          'modern-robotics'
       ],
       license="MIT",
       author='Kaiyu Zheng',
