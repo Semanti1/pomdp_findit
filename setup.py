@@ -58,3 +58,4 @@ setup(name='pomdp-py',
                     "pomdp_problems": ["*.pxd", "*.pyx"]},
       zip_safe=False
 )
+

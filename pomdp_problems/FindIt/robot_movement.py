@@ -22,8 +22,7 @@ arm = InterbotixRobot(robot_name="vx300", mrd=mrd)
 #z-axis height of object being observed
 object_height = 0.09
 
-# lowers arm to check if an object is present, returning True if the force sensor
-# returns a value higher than 300 and False otherwise
+
 def check_pose(x, y, z):
     arm.set_ee_pose_components(x, y, z=object_height, pitch=1.5)
     # takes 3 readings to alleviate random error
@@ -45,11 +44,54 @@ def check_pose(x, y, z):
     arm.set_ee_pose_components(x, y, z, pitch=1.5)
     return False
 
-def main():
+# lowers arm to check if an object is present, returning True if the force sensor
+# returns a value higher than 300 and False otherwise
+# def check_pose(z):
+#     arm.set_ee_cartesian_trajectory(z=object_height, pitch=1.5)
+#     # takes 3 readings to alleviate random error
+#     for i in range(3):
+#         string = None
+#         while not string:
+#             # flush serial to ensure readings are live
+#             ser.flush()
+#             ser.flushInput()
+#             b = ser.readline()     # read a byte string
+#             string_n = b.decode()  # decode byte string into Unicode  
+#             string = string_n.rstrip() # remove \n and \r
+#             if string:
+#                 flt = float(string)    # convert string to float
+#                 print(flt)
+#                 if flt > 300:
+#                     return True
+#             time.sleep(0.01)          
+#     arm.set_ee_cartesian_trajectory(z=z, pitch=1.5)
+#     return False
+
+
+
+def move_to_pos(x_pos,y_pos):
+    arm.set_ee_pose_components(x=x_pos, y=y_pos, z=0.15, pitch=1.5)
+
+
+def pick_and_place(x,y):
+    arm.set_ee_pose_components(x=x,y=y,z=0.2, pitch=1.5)
+    arm.open_gripper(delay=1.5)
+    arm.set_ee_pose_components(x=x,y=y,z=0.05, pitch=1.5)
+    arm.close_gripper(delay=1.5)
+    arm.set_ee_pose_components(x=0, y=0.3, z=0.3, pitch=1.5)
+    arm.open_gripper(delay=1.5)
+    arm.close_gripper(delay=2.0)
+    arm.set_ee_pose_components(x=0.3, z=0.2)
+    arm.go_to_sleep_pose()
+
+def starting_pos():
     arm.set_ee_pose_components(x=0.3, z=0.2)
     arm.set_ee_cartesian_trajectory(pitch=1.5)
 
 
+def main():
+    arm.set_ee_pose_components(x=0.3, z=0.2)
+    arm.set_ee_cartesian_trajectory(pitch=1.5)
     # arbitrary locations, checks a 3x3 grid of locations to find object
     for i in range(3):
         for j in range(3):
