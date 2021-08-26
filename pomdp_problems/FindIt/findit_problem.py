@@ -169,12 +169,13 @@ class TransitionModel(pomdp_py.TransitionModel):
                             state.position_r[2] + action.motion[2])
 
         elif isinstance(action, LookAction):
-            next_state_r = (state.position_r[0], state.position_r[1], 10)
+            next_state_r = (state.position_r[0], state.position_r[1], 1)
         else:
-            next_state_r = state.position_r
-
-        if (state.position_r == state.position_o):
+            #next_state_r = state.position_r
             next_state_found = True;
+
+        '''if (state.position_r == state.position_o):
+            next_state_found = True;'''
 
         return State(next_state_r,next_state_o,next_state_found)
 
@@ -307,7 +308,7 @@ def init_particles_belief(n,num_particles, init_state, belief="uniform"):
     particles = []
     for _ in range(num_particles):
         if belief == "uniform":
-            position_o = (random.randint(0,n),random.randint(0,n),10)
+            position_o = (random.randint(0,n),random.randint(0,n),1)
         elif belief == "groundtruth":
             position_o = copy.deepcopy(init_state.position_o)
         particles.append(State(init_state.position_r, position_o, False))
@@ -352,6 +353,7 @@ def test_planner(findit_problem, planner, nsteps=3,discount=0.95):
     for i in range(nsteps):
         print("==== Step %d ====" % (i + 1))
         action = planner.plan(findit_problem.agent)
+
         print("Belief: %s" % str(findit_problem.agent.sample_belief()))
         # pomdp_py.visual.visualize_pouct_search_tree(rocksample.agent.tree,
         #                                             max_depth=5, anonymize=False)
@@ -380,7 +382,7 @@ def test_planner(findit_problem, planner, nsteps=3,discount=0.95):
             print("__best_reward__: %d" % planner.last_best_reward)
         print("World:")
         #rocksample.print_state()
-        if true_next_state.foundit:
+        if true_state.foundit:
            break
 
 
@@ -392,7 +394,7 @@ def main():
 
     n = 5
 
-    init_state = State((2,0,20),(1,4,10), False)
+    init_state = State((2,0,2),(1,4,1), False)
 
 
     belief = "uniform"
@@ -409,7 +411,7 @@ def main():
 
     print("*** Testing POMCP ***")
     pomcp = pomdp_py.POMCP(max_depth=10, discount_factor=0.95,
-                           num_sims=32000, exploration_const=20,
+                           num_sims=64000, exploration_const=20,
                            rollout_policy=findit.agent.policy_model,
                            num_visits_init=1)
     start_pomcp = time.time()
